@@ -20,6 +20,11 @@ class target_custom_post{
   
     public function __construct(){
         add_action('init', array( $this, 'init' ));
+
+        add_filter( 'manage_services_posts_columns', array( $this, 'add_custome_column_in_services' ) );
+        add_action( 'manage_services_posts_custom_column', array( $this, 'manage_services_posts_custom_column' ), 10, 2 );
+
+
     }
 
     public function init(){
@@ -37,10 +42,8 @@ class target_custom_post{
             'show_in_rest' => true,
             'supports' => array( 'title', 'editor', 'page-attributes', 'thumbnail' ),
             'hierarchical' => true,
-            // 'exclude_from_search' => true,
-            // 'publicly_queryable' => false,
-            'menu_position' => 8,
-            'menu_icon' => 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiBmaWxsPSIjZmZmIj48IS0tIUZvbnQgQXdlc29tZSBGcmVlIDYuNy4xIGJ5IEBmb250YXdlc29tZSAtIGh0dHBzOi8vZm9udGF3ZXNvbWUuY29tIExpY2Vuc2UgLSBodHRwczovL2ZvbnRhd2Vzb21lLmNvbS9saWNlbnNlL2ZyZWUgQ29weXJpZ2h0IDIwMjQgRm9udGljb25zLCBJbmMuLS0+PHBhdGggZD0iTTMuOSA1NC45QzEwLjUgNDAuOSAyNC41IDMyIDQwIDMybDQzMiAwYzE1LjUgMCAyOS41IDguOSAzNi4xIDIyLjlzNC42IDMwLjUtNS4yIDQyLjVMMzIwIDMyMC45IDMyMCA0NDhjMCAxMi4xLTYuOCAyMy4yLTE3LjcgMjguNnMtMjMuOCA0LjMtMzMuNS0zbC02NC00OGMtOC4xLTYtMTIuOC0xNS41LTEyLjgtMjUuNmwwLTc5LjFMOSA5Ny4zQy0uNyA4NS40LTIuOCA2OC44IDMuOSA1NC45eiIvPjwvc3ZnPg==',
+            'menu_position' => 15,
+            'menu_icon' => 'dashicons-id',
             'has_archive' => true,
             'rewrite' => array( 'slug' => 'Services' ),
         ) );
@@ -68,6 +71,44 @@ class target_custom_post{
 
     }
 
+    
+    public function add_custome_column_in_services(  $columns  ){
+
+        $columns[ 'cate' ] = 'Categorys';
+        $columns[ 'tags' ] = 'Tags';
+
+         return $columns;
+    }
+
+    public function manage_services_posts_custom_column(  $column_name,  $post_id  ){
+       
+        if( 'cate' == $column_name ){
+
+            $terms = wp_get_post_terms( $post_id, 'services_category' );
+            $terms_name = array_map(function( $term ){
+                // return $term->name;
+                return '<a href="' . esc_url( get_term_link( $term ) ) . '">' . esc_html( $term->name ) . '</a>';
+            }, $terms);
+
+            echo implode( ', ', $terms_name );
+        
+        }
+
+        if( 'tags' == $column_name ){
+
+           echo  $terms = wp_get_post_tags( $post_id, 'services_tags' );
+            $terms_name = array_map(function( $term ){
+                // return $term->name;
+                return '<a href="' . esc_url( get_term_link( $term ) ) . '">' . esc_html( $term->name ) . '</a>';
+            }, $terms);
+
+            echo implode( ', ', $terms_name );
+        
+        }
+        
+       
+
+    }
 
 }
 
