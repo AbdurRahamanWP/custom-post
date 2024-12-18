@@ -74,42 +74,36 @@ class target_custom_post{
     
     public function add_custome_column_in_services(  $columns  ){
 
-        $columns[ 'cate' ] = 'Categorys';
-        $columns[ 'tags' ] = 'Tags';
+        $columns[ 'servie_cate' ] = 'Categorys';
+        $columns[ 'service_tags' ] = 'Tags';
+        $columns[ 'service_images' ] = 'Images';
 
          return $columns;
     }
 
     public function manage_services_posts_custom_column(  $column_name,  $post_id  ){
-       
-        if( 'cate' == $column_name ){
-
+        if( 'servie_cate' == $column_name ){
             $terms = wp_get_post_terms( $post_id, 'services_category' );
             $terms_name = array_map(function( $term ){
-                // return $term->name;
                 return '<a href="' . esc_url( get_term_link( $term ) ) . '">' . esc_html( $term->name ) . '</a>';
             }, $terms);
-
             echo implode( ', ', $terms_name );
         
-        }
-
-        if( 'tags' == $column_name ){
-
-           echo  $terms = wp_get_post_tags( $post_id, 'services_tags' );
+        }elseif( 'service_tags' == $column_name ){
+            $terms = wp_get_post_terms( $post_id, 'services_tags' );
             $terms_name = array_map(function( $term ){
-                // return $term->name;
-                return '<a href="' . esc_url( get_term_link( $term ) ) . '">' . esc_html( $term->name ) . '</a>';
-            }, $terms);
-
+            return '<a href="' . esc_url( get_term_link( $term ) ) . '">' . esc_html( $term->name ) . '</a>';
+        }, $terms);
             echo implode( ', ', $terms_name );
-        
         }
-        
-       
+        elseif( 'service_images' == $column_name ){
+            the_post_thumbnail( 'thumbnail' );
+        }
 
     }
 
+    
+   
 }
 
 new target_custom_post();
